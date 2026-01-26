@@ -81,7 +81,7 @@ fi
 RUN_UUID="$(whoami)-$(uuidgen | cut -d '-' -f 1)"
 RUN_NAME="easyr1-grpo-${RUN_UUID}"
 
-flexai training run grpo \
+flexai training run "${RUN_NAME}" \
   --accels 8 --nodes 1 \
   --repository-url https://github.com/flexaihq/blueprints \
   --env FORCE_TORCHRUN=1 \
