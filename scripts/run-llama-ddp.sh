@@ -3,6 +3,7 @@
 RUN_UUID="$(whoami)-$(uuidgen | cut -d '-' -f 1)"
 RUN_NAME="llama3-1-training-ddp-${RUN_UUID}"
 
+# Install code-registry to point to your specfic git repo: https://docs.flex.ai/cli/reference/code-registry/connect#usage 
 PUBLIC_REPO_URL="https://github.com/kd2594/blueprints/tree/main"
 PRIVATE_REPO_URL="https://github.com/kd2594/test-blueprints/tree/main"
 
