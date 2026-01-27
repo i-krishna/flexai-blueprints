@@ -3,7 +3,7 @@
 RUN_UUID="$(whoami)-$(uuidgen | cut -d '-' -f 1)"
 RUN_NAME="llama3-1-training-ddp-${RUN_UUID}"
 
-flexai training run "${RUN_NAME}" --repository-url https://github.com/flexaihq/blueprints --requirements-path code/causal-language-modeling-qlora/requirements.txt \
+flexai training run "${RUN_NAME}" --repository-url https://github.com/kd2594/blueprints/tree/main --requirements-path code/causal-language-modeling-qlora/requirements.txt \
   --dataset llama-tokenized-oag \
   --secret HF_TOKEN=secret_kd \
   --nodes 1 --accels 2 \
