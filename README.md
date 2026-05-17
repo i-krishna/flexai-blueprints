@@ -85,6 +85,7 @@ In a production multi-tenant platform, you run MIG instances as Kubernetes resou
 yaml
 
 ### Customer 1's inference pod
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -100,8 +101,10 @@ spec:
     env:
     - name: CUDA_VISIBLE_DEVICES
       value: "MIG-xxxxxxx-0"        # ← pinned to specific instance
+```
 ---
 ### Customer 2's inference pod
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -117,7 +120,7 @@ spec:
     env:
     - name: CUDA_VISIBLE_DEVICES
       value: "MIG-xxxxxxx-1"        # ← pinned to different instance
-
+```
 CUDA_VISIBLE_DEVICES is the key environment variable — it tells the CUDA runtime which devices exist from this process's perspective. Customer 1's container literally cannot see any MIG instance other than MIG-xxxxxxx-0. Even if a bug in their code tried to access cuda:1, CUDA returns no device found.
 
 
