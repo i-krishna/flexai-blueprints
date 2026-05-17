@@ -124,4 +124,14 @@ spec:
 CUDA_VISIBLE_DEVICES is the key environment variable — it tells the CUDA runtime which devices exist from this process's perspective. Customer 1's container literally cannot see any MIG instance other than MIG-xxxxxxx-0. Even if a bug in their code tried to access cuda:1, CUDA returns no device found.
 
 
+# Cost efficiency in practice
+Here's how the economics work with a 7-way MIG split:
+Without MIG — naive approach:
+  7 customers × 1 A100 each = 7 × $3/hr = $21/hr
+  Each customer gets 80GB, uses 8GB → 90% waste
 
+With MIG — 7x 1g.10gb on one A100:
+  1 A100 × $3/hr = $3/hr shared across 7 customers
+  Each customer pays ~$0.43/hr
+  GPU utilisation: 85-95% (each 10GB slice nearly full)
+  Cost reduction: 85%
