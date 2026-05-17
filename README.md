@@ -14,6 +14,7 @@ They are purpose-built for genuinely different problems, which is why modern AI 
 What MIG actually is — physically
 An A100 or H100 GPU is not one monolithic chip. Internally it's built from GPU Memory Slices and Compute Slices (called SM — Streaming Multiprocessors). MIG lets you cut these physical slices into independent instances.
 
+```
 On an A100 (80GB):
 A100 Physical GPU
 ├── 108 Streaming Multiprocessors (SMs)
@@ -28,6 +29,7 @@ MIG partitioning options:
 ├──────┬──────┬──────┬────────────────────────┤
 │  7x  MIG 1g.10gb  → 1/7 each (7 instances)  │
 └──────┴──────┴──────┴────────────────────────┘
+```
 
 Each MIG instance gets:
 
@@ -42,6 +44,7 @@ This is hardware-level isolation — not virtualisation, not software partitioni
 
 ## Layer 1: Hardware (silicon-level)
 NVIDIA's MIG architecture enforces isolation in the hardware itself. Each instance has its own:
+```
 MIG Instance A (Customer 1)        MIG Instance B (Customer 2)
 ├── SMs 0-13  (dedicated)          ├── SMs 14-27 (dedicated)
 ├── 10GB HBM  (dedicated)          ├── 10GB HBM  (dedicated)
@@ -53,12 +56,14 @@ MIG Instance A (Customer 1)        MIG Instance B (Customer 2)
     enforces that SM 0-13 can NEVER
     address memory belonging to partition B
     This is not software — it's circuit-level
-
+```
 A workload running in MIG instance A literally cannot generate a memory address that falls inside MIG instance B's memory range. The hardware Memory Management Unit rejects it at the silicon level — no software bug in your code, no misconfigured container, no malicious tenant can cross this boundary.
 
 ## Layer 2: OS / Driver (NVIDIA driver + CUDA)
 The NVIDIA driver exposes each MIG instance as a separate device:
+```
 bash# Without MIG — one device
+
 $ nvidia-smi
 GPU 0: A100-SXM4-80GB
 
@@ -72,6 +77,7 @@ GPU 0: A100-SXM4-80GB
   MIG 1g.10gb  Device 4: (UUID: MIG-xxxxxxx-4)
   MIG 1g.10gb  Device 5: (UUID: MIG-xxxxxxx-5)
   MIG 1g.10gb  Device 6: (UUID: MIG-xxxxxxx-6)
+```
 From the OS perspective, these are completely separate GPUs. A process assigned to Device 0 cannot see Device 1 — the driver enforces this at the device file level (/dev/nvidia0 vs /dev/nvidia1).
 
 ## Layer 3: Kubernetes / Container (orchestration)
